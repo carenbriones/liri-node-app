@@ -8,7 +8,7 @@ var keys = require("./keys.js");
 var spotify = new Spotify(keys.spotify);
 
 var action = process.argv[2];
-var search = process.argv[3];
+var search = process.argv.slice(3).join(" ");
 
 executeAction(action, search);
 
