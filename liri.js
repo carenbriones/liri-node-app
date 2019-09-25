@@ -21,7 +21,7 @@ function concertThis(artist) {
                 // Obtains all required data
                 var venueStr = "Venue: " + response.data[i].venue.name;
                 var locationStr = "Location: " + response.data[i].venue.city + ", " + response.data[i].venue.region;
-                var dateStr = "Date: " + response.data[i].datetime + "\n";
+                var dateStr = "Date: " + moment(response.data[i].datetime).format("MM/DD/YYYY") + "\n";
 
                 // Logs data to console
                 console.log(venueStr);
@@ -31,7 +31,26 @@ function concertThis(artist) {
                 // Appends data to log.txt
                 appendToFile(venueStr + "\n" + locationStr + "\n" + dateStr + "\n");
             }
-        })
+        }).catch(function(error) { // Retrieved from Activity 17-OMDB_Axios in Unit 10
+            if (error.response) {
+                // The request was made and the server responded with a status code
+                // that falls out of the range of 2xx
+                console.log("---------------Data---------------");
+                console.log(error.response.data);
+                console.log("---------------Status---------------");
+                console.log(error.response.status);
+                console.log("---------------Status---------------");
+                console.log(error.response.headers);
+            } else if (error.request) {
+                // The request was made but no response was received
+                // `error.request` is an object that comes back with details pertaining to the error that occurred.
+                console.log(error.request);
+            } else {
+                // Something happened in setting up the request that triggered an Error
+                console.log("Error", error.message);
+            }
+            console.log(error.config);
+        });
 }
 
 function spotifyThisSong(song) {
@@ -137,7 +156,12 @@ function executeAction(action, search) {
             concertThis(search);
             break;
         case "spotify-this-song":
-            spotifyThisSong(search);
+            // If user types in a song to search, display the song's info
+            if (search) {
+                spotifyThisSong(search);
+            } else { // If they don't provide a song, display info for "The Sign"
+                spotifyThisSong("The Sign Ace of Base");
+            }
             break;
         case "movie-this":
             // If user types in a movie to search, display the movie's info
@@ -153,6 +177,7 @@ function executeAction(action, search) {
     }
 }
 
+// Appends text to log.txt file
 function appendToFile(text) {
     fs.appendFile("log.txt", text, function(err) {
         // If an error was experienced we will log it.
