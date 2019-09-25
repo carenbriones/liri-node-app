@@ -44,19 +44,27 @@ function spotifyThisSong(song) {
             return console.log("Error occurred: " + err);
         } else {
             // Obtains all required data
-            var artistStr = "Artist(s): " + data.tracks.items[0].artists[0].name;
+            var artistsStr = "Artist(s): ";
+            for (var i = 0; i < data.tracks.items[0].artists.length; i++) {
+                artistsStr += data.tracks.items[0].artists[i].name;
+                // If index is not last index, add comma
+                if (i !== data.tracks.items[0].artists.length - 1) {
+                    artistsStr += ", ";
+                }
+            }
+            // var artistsStr = "Artist(s): " + data.tracks.items[0].artists;
             var songTitleStr = "Song Title: " + data.tracks.items[0].name;
             var previewLinkStr = "Preview Link: " + data.tracks.items[0].preview_url;
             var albumStr = "Album: " + data.tracks.items[0].album.name;
 
             // Logs all data to console
-            console.log(artistStr);
+            console.log(artistsStr);
             console.log(songTitleStr);
             console.log(previewLinkStr);
             console.log(albumStr);
 
             // Appends data to log.txt
-            appendToFile(artistStr + "\n" + songTitleStr + "\n" + previewLinkStr + "\n" + albumStr + "\n\n");
+            appendToFile(artistsStr + "\n" + songTitleStr + "\n" + previewLinkStr + "\n" + albumStr + "\n\n");
         }
     })
 }
