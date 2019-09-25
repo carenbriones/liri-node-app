@@ -10,15 +10,26 @@ var spotify = new Spotify(keys.spotify);
 var action = process.argv[2];
 var search = process.argv.slice(3).join(" ");
 
+// Appends command to log.txt to make data easier to read
+appendToFile(action + " " + search + "\n");
 executeAction(action, search);
 
 function concertThis(artist) {
     axios.get("https://rest.bandsintown.com/artists/" + artist + "/events?app_id=codingbootcamp")
         .then(function(response) {
             for (var i = 0; i < response.data.length; i++) {
-                console.log("Venue: " + response.data[i].venue.name);
-                console.log("Location: " + response.data[i].venue.city + ", " + response.data[i].venue.region);
-                console.log("Date: " + response.data[i].datetime + "\n");
+                // Obtains all required data
+                var venueStr = "Venue: " + response.data[i].venue.name;
+                var locationStr = "Location: " + response.data[i].venue.city + ", " + response.data[i].venue.region;
+                var dateStr = "Date: " + response.data[i].datetime + "\n";
+
+                // Logs data to console
+                console.log(venueStr);
+                console.log(locationStr);
+                console.log(dateStr);
+
+                // Appends data to log.txt
+                appendToFile(venueStr + "\n" + locationStr + "\n" + dateStr + "\n");
             }
         })
 }
@@ -32,10 +43,20 @@ function spotifyThisSong(song) {
         if (err) {
             return console.log("Error occurred: " + err);
         } else {
-            console.log("\nArtist(s): " + data.tracks.items[0].artists[0].name);
-            console.log("Song Title: " + data.tracks.items[0].name);
-            console.log("Preview Link: " + data.tracks.items[0].preview_url);
-            console.log("Album: " + data.tracks.items[0].album.name + "\n");
+            // Obtains all required data
+            var artistStr = "Artist(s): " + data.tracks.items[0].artists[0].name;
+            var songTitleStr = "Song Title: " + data.tracks.items[0].name;
+            var previewLinkStr = "Preview Link: " + data.tracks.items[0].preview_url;
+            var albumStr = "Album: " + data.tracks.items[0].album.name;
+
+            // Logs all data to console
+            console.log(artistStr);
+            console.log(songTitleStr);
+            console.log(previewLinkStr);
+            console.log(albumStr);
+
+            // Appends data to log.txt
+            appendToFile(artistStr + "\n" + songTitleStr + "\n" + previewLinkStr + "\n" + albumStr + "\n\n");
         }
     })
 }
@@ -43,14 +64,29 @@ function spotifyThisSong(song) {
 function movieThis(movie) {
     axios.get("http://www.omdbapi.com/?t=" + movie + "&y=&plot=short&apikey=trilogy").then(
             function(response) {
-                console.log("\nTitle: " + response.data.Title);
-                console.log("Year Released: " + response.data.Year);
-                console.log("IMDB Rating: " + response.data.Ratings[0].Value);
-                console.log("Rotten Tomatoes Rating: " + response.data.Ratings[1].Value);
-                console.log("Country Produced: " + response.data.Country);
-                console.log("Language: " + response.data.Country);
-                console.log("Plot: " + response.data.Plot);
-                console.log("Actors: " + response.data.Actors + "\n");
+                // Obtains all required data
+                var titleStr = "Title: " + response.data.Title;
+                var yearReleasedString = "Year Released: " + response.data.Year;
+                var IMDBStr = "IMDB Rating: " + response.data.Ratings[0].Value;
+                var rottenTomatoesStr = "Rotten Tomatoes Rating: " + response.data.Ratings[1].Value;
+                var countryStr = "Country Produced: " + response.data.Country;
+                var languageStr = "Language: " + response.data.Language;
+                var plotStr = "Plot: " + response.data.Plot;
+                var actorsStr = "Actors: " + response.data.Actors + "\n";
+
+                // Logs all data to console
+                console.log(titleStr);
+                console.log(yearReleasedString);
+                console.log(IMDBStr);
+                console.log(rottenTomatoesStr);
+                console.log(countryStr);
+                console.log(languageStr);
+                console.log(plotStr);
+                console.log(actorsStr);
+
+                // Appends data to log.txt
+                appendToFile(titleStr + "\n" + yearReleasedString + "\n" + IMDBStr + "\n" + rottenTomatoesStr + "\n" +
+                    countryStr + "\n" + languageStr + "\n" + plotStr + "\n" + actorsStr + "\n");
             })
         .catch(function(error) { // Retrieved from Activity 17-OMDB_Axios in Unit 10
             if (error.response) {
@@ -84,7 +120,6 @@ function doWhatItSays() {
         // Split data by commas
         var dataArr = data.split(",");
         executeAction(dataArr[0], dataArr[1]);
-
     });
 }
 
@@ -108,4 +143,13 @@ function executeAction(action, search) {
             doWhatItSays();
             break;
     }
+}
+
+function appendToFile(text) {
+    fs.appendFile("log.txt", text, function(err) {
+        // If an error was experienced we will log it.
+        if (err) {
+            console.log(err);
+        }
+    });
 }
